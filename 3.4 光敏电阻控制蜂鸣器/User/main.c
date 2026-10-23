@@ -2,25 +2,24 @@
 #include "Delay.h"
 #include "LED.h"
 #include "Key.h"
+#include "Buzzer.h"
+#include "LightSensor.h"
 
-
-uint8_t KeyNum ;
 int main(void )
 {
-	LED_Init();
-	Key_Init();
+	Buzzer_Init();
+	LightSensor_Init();
 	
 	
 	while(1)
 	{
-		KeyNum = Key_GetNum();
-		if (KeyNum==1)
+		if(LightSensor_Get()==1)
 		{
-			LED1_Turn();
+			Buzzer_ON();
 		}
-		if (KeyNum==2)
+		else
 		{
-			LED2_Turn();
+			Buzzer_OFF();
 		}
 	}
 }

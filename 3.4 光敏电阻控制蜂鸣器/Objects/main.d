@@ -31,3 +31,5 @@
 .\objects\main.o: .\System\Delay.h
 .\objects\main.o: .\Hardware\LED.h
 .\objects\main.o: .\Hardware\Key.h
+.\objects\main.o: .\Hardware\Buzzer.h
+.\objects\main.o: .\Hardware\LightSensor.h
