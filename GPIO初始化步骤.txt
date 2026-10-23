@@ -1,0 +1,65 @@
+STM32入门-GPIO初始化步骤
+基础知识
+STM32F103ZE的开发板 里总共有7组IO口，每组IO口有16个IO，即这块板子总共有112个IO口分别是GPIOA~GPIOG。每个I/O端口位可以自由编程，但I/O端口寄存器必须按32位字节访问，不允许半字或单字节访问。
+GPIO的工作模式主要有八种：4种输入方式，4种输出方式，分别为输入浮空，输入上拉，输入下拉，模拟输入；输出方式为开漏输出，开漏复用输出，推挽输出，推挽复用输出。
+（1）GPIO_Mode_AIN 模拟输入 （应用ADC 模拟输入，或者低功耗下省电）
+（2）GPIO_Mode_IN_FLOATING 浮空输入 （浮空就是浮在半空，可以被其他物体拉上或者拉下，可以用于按键输入）
+（3）GPIO_Mode_IPD 下拉输入 （IO内部下拉电阻输入）
+（4）GPIO_Mode_IPU 上拉输入 （IO内部上拉电阻输入）
+（5）GPIO_Mode_Out_OD 开漏输出（开漏输出:输出端相当于三极管 的集电极. 要得到高电平状态需要上拉电阻才行）
+（6）GPIO_Mode_Out_PP 推挽输出 （推挽就是有推有拉电平都是确定的，不需要上拉和下拉，IO输出0-接GND， IO输出1 -接VCC，读输入值是未知的 ）
+（7）GPIO_Mode_AF_OD 复用开漏输出（片内外设功能（I2C的SCL,SDA））
+（8）GPIO_Mode_AF_PP 复用推挽输出 （片内外设功能（TX1,MOSI,MISO.SCK.SS））
+
+GPIO初始化 步骤
+第一步：使能GPIOx口的时钟
+第二步：指明GPIOx口的哪一位，这一位的速度大小以及模式。
+第三步：调用GPIOx口初始化函数，进行初始化。
+第四步：调用GPIO-SetBits函数，进行相应为的置位。
+
+实例如下
+☞对于单个GPIO口的初始化如下
+
+GPIO_InitTypeDef GPIO_InitStructure;
+第一步：使能GPIOA的时钟：
+RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+
+第二步：设置GPIOA参数：输出OR输入，工作模式，端口翻转速率
+GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0|GPIO_Pin_6| GPIO_Pin_7| GPIO_Pin_8; //设定要操作的管脚
+GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP; //设置为推挽输出
+GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz; // IO口速度为50MHz
+
+第三步：调用GPIOA口初始化函数，进行初始化。
+GPIO_Init(GPIOA, &GPIO_InitStructure); //根据设定参数初始化GPIOA
+
+第四步：调用GPIO-SetBits函数，进行相应为的置位。
+GPIO_SetBits(GPIOA,GPIO_Pin_0); //输出高
+
+☞对于多个GPIO口的初始化如下
+
+GPIO_InitTypeDef GPIO_InitStructure;
+第一步：使能GPIOA，GPIOE的时钟：
+RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOE, ENABLE);
+
+第二步：设置GPIOA,GPIOE参数：输出OR输入，工作模式，端口翻转速率
+第三步：调用GPIOA口初始化函数，进行初始化。
+第四步：调用GPIO-SetBits函数，进行相应为的置位。
+
+▶把第二、三、四步合并 分别设置GPIOA和GPIOE
+先设置GPIOA
+GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4; // 第四个口，PA4
+GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP; //设置为推挽输出
+GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz; // IO口速度为50MHz
+GPIO_Init(GPIOA,&GPIO-InitST); //根据设定参数初始化GPIOA
+GPIO_SetBits(GPIOA,GPIO_Pin_4); //输出高
+
+再设置GPIOE
+GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3; // 第三个口，PE3
+GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP; //设置为推挽输出
+GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz; // IO口速度为50MHz
+GPIO_Init(GPIOE,&GPIO-InitST); //根据设定参数初始化GPIOE
+GPIO_SetBits(GPIOE,GPIO_Pin_3); //输出高
+————————————————
+版权声明：本文为CSDN博主「爱学习的大喵喵」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/weixin_44188050/article/details/103999663
